@@ -59,7 +59,219 @@ async function registrarNombre(nombre: string, numinvitados: number) {
   }
 }
 
+// Custom hook for responsive layout
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth <= breakpoint : false
+  )
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(`(max-width: ${breakpoint}px)`)
+    const updateMatch = () => setIsMobile(mediaQuery.matches)
+    updateMatch()
+    mediaQuery.addEventListener('change', updateMatch)
+    return () => mediaQuery.removeEventListener('change', updateMatch)
+  }, [breakpoint])
+
+  return isMobile
+}
+
+function MobileMisaSection() {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start start', 'end end'],
+  })
+
+  const cardX = useTransform(scrollYProgress, [0, 0.45, 1], [-60, 0, 0], { clamp: true })
+  const cardRot = useTransform(scrollYProgress, [0, 0.45, 1], [-6, 0, 0], { clamp: true })
+  const cardScale = useTransform(scrollYProgress, [0, 0.45, 1], [0.85, 1, 1], { clamp: true })
+  const cardOpacity = useTransform(scrollYProgress, [0, 0.3, 1], [0, 1, 1], { clamp: true })
+
+  const mapBounceY = useTransform(scrollYProgress, [0, 0.45, 0.55, 0.65, 0.75, 0.85, 1], [0, 0, -20, 0, -10, 0, 0], { clamp: true })
+  const mapBounceScale = useTransform(scrollYProgress, [0, 0.45, 0.55, 0.65, 0.75, 0.85, 1], [1, 1, 1.2, 0.96, 1.1, 0.98, 1], { clamp: true })
+  const mapBounceRot = useTransform(scrollYProgress, [0, 0.45, 0.55, 0.65, 0.75, 0.85, 1], [0, 0, -8, 6, -3, 1, 0], { clamp: true })
+
+  return (
+    <div className='scroll-section-container' ref={containerRef}>
+      <div className='scroll-section-sticky'>
+        <div className='flex center-w'>
+          <motion.div
+            className="small-card"
+            style={{ x: cardX, rotate: cardRot, scale: cardScale, opacity: cardOpacity }}
+          >
+            <h1>Misa</h1>
+            <p><strong>5:00 pm</strong></p>
+
+            <div className='flex center-w'>
+              <motion.a
+                className='map-icon'
+                href='https://maps.app.goo.gl/YrJW4Q5hYvbfLf1u8'
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  y: mapBounceY,
+                  scale: mapBounceScale,
+                  rotate: mapBounceRot,
+                  display: 'inline-block',
+                }}
+                whileHover={{ scale: 1.15 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <img src={mapIcon} alt="Map" />
+              </motion.a>
+            </div>
+            <p>Parroquia de nuestra señora del destierro</p>
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function MobileRecepcionSection() {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start start', 'end end'],
+  })
+
+  const cardX = useTransform(scrollYProgress, [0, 0.45, 1], [60, 0, 0], { clamp: true })
+  const cardRot = useTransform(scrollYProgress, [0, 0.45, 1], [6, 0, 0], { clamp: true })
+  const cardScale = useTransform(scrollYProgress, [0, 0.45, 1], [0.85, 1, 1], { clamp: true })
+  const cardOpacity = useTransform(scrollYProgress, [0, 0.3, 1], [0, 1, 1], { clamp: true })
+
+  const mapBounceY = useTransform(scrollYProgress, [0, 0.45, 0.55, 0.65, 0.75, 0.85, 1], [0, 0, -20, 0, -10, 0, 0], { clamp: true })
+  const mapBounceScale = useTransform(scrollYProgress, [0, 0.45, 0.55, 0.65, 0.75, 0.85, 1], [1, 1, 1.2, 0.96, 1.1, 0.98, 1], { clamp: true })
+  const mapBounceRot = useTransform(scrollYProgress, [0, 0.45, 0.55, 0.65, 0.75, 0.85, 1], [0, 0, -8, 6, -3, 1, 0], { clamp: true })
+
+  return (
+    <div className='scroll-section-container' ref={containerRef}>
+      <div className='scroll-section-sticky'>
+        <div className='flex center-w'>
+          <motion.div
+            className="small-card"
+            style={{ x: cardX, rotate: cardRot, scale: cardScale, opacity: cardOpacity }}
+          >
+            <h1>Recepción</h1>
+            <p><strong>6:00pm</strong></p>
+
+            <div className='flex center-w'>
+              <motion.a
+                className='map-icon'
+                href='https://maps.app.goo.gl/qGQAaZU4FfchrnsT9'
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  y: mapBounceY,
+                  scale: mapBounceScale,
+                  rotate: mapBounceRot,
+                  display: 'inline-block',
+                }}
+                whileHover={{ scale: 1.15 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <img src={mapIcon} alt="Map" />
+              </motion.a>
+            </div>
+            <p>Salón Los Encinos</p>
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function DesktopCardsSection() {
+  const cardsContainerRef = useRef<HTMLDivElement>(null)
+  const { scrollYProgress: scrollYCards } = useScroll({
+    target: cardsContainerRef,
+    offset: ['start start', 'end end'],
+  })
+
+  // Card 1 (Misa) enters first (0 to 40% of scroll)
+  const card1X = useTransform(scrollYCards, [0, 0.4, 1], [-100, 0, 0], { clamp: true })
+  const card1Rot = useTransform(scrollYCards, [0, 0.4, 1], [-8, 0, 0], { clamp: true })
+  const card1Scale = useTransform(scrollYCards, [0, 0.4, 1], [0.85, 1, 1], { clamp: true })
+  const card1Opacity = useTransform(scrollYCards, [0, 0.25, 1], [0, 1, 1], { clamp: true })
+
+  // Card 2 (Recepción) enters second (35% to 70% of scroll)
+  const card2X = useTransform(scrollYCards, [0, 0.35, 0.7, 1], [100, 100, 0, 0], { clamp: true })
+  const card2Rot = useTransform(scrollYCards, [0, 0.35, 0.7, 1], [8, 8, 0, 0], { clamp: true })
+  const card2Scale = useTransform(scrollYCards, [0, 0.35, 0.7, 1], [0.85, 0.85, 1, 1], { clamp: true })
+  const card2Opacity = useTransform(scrollYCards, [0, 0.35, 0.55, 1], [0, 0, 1, 1], { clamp: true })
+
+  // Bouncing animation for map icons after both cards have settled (70% to 100%)
+  const mapBounceY = useTransform(scrollYCards, [0, 0.7, 0.77, 0.84, 0.91, 0.96, 1], [0, 0, -20, 0, -10, 0, 0], { clamp: true })
+  const mapBounceScale = useTransform(scrollYCards, [0, 0.7, 0.77, 0.84, 0.91, 0.96, 1], [1, 1, 1.2, 0.96, 1.1, 0.98, 1], { clamp: true })
+  const mapBounceRot = useTransform(scrollYCards, [0, 0.7, 0.77, 0.84, 0.91, 0.96, 1], [0, 0, -8, 6, -3, 1, 0], { clamp: true })
+
+  return (
+    <div className='scroll-section-container' ref={cardsContainerRef}>
+      <div className='scroll-section-sticky'>
+        <div className='flex center-w f-wrap'>
+          <motion.div
+            className="small-card"
+            style={{ x: card1X, rotate: card1Rot, scale: card1Scale, opacity: card1Opacity }}
+          >
+            <h1>Misa</h1>
+            <p><strong>5:00 pm</strong></p>
+
+            <div className='flex center-w'>
+              <motion.a
+                className='map-icon'
+                href='https://maps.app.goo.gl/YrJW4Q5hYvbfLf1u8'
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  y: mapBounceY,
+                  scale: mapBounceScale,
+                  rotate: mapBounceRot,
+                  display: 'inline-block',
+                }}
+                whileHover={{ scale: 1.15 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <img src={mapIcon} alt="Map" />
+              </motion.a>
+            </div>
+            <p>Parroquia de nuestra señora del destierro</p>
+          </motion.div>
+          <motion.div
+            className="small-card"
+            style={{ x: card2X, rotate: card2Rot, scale: card2Scale, opacity: card2Opacity }}
+          >
+            <h1>Recepción</h1>
+            <p><strong>6:00pm</strong></p>
+
+            <div className='flex center-w'>
+              <motion.a
+                className='map-icon'
+                href='https://maps.app.goo.gl/qGQAaZU4FfchrnsT9'
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  y: mapBounceY,
+                  scale: mapBounceScale,
+                  rotate: mapBounceRot,
+                  display: 'inline-block',
+                }}
+                whileHover={{ scale: 1.15 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <img src={mapIcon} alt="Map" />
+              </motion.a>
+            </div>
+            <p>Salón Los Encinos</p>
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function App() {
+  const isMobile = useIsMobile(768)
   const [nombre, setNombre] = useState('')
   const [numInvitados, setNumInvitados] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
@@ -215,30 +427,6 @@ function App() {
   const floresTextY = useTransform(scrollYFlores, [0, 0.4, 1], [30, 15, 0])
   const floresTextOpacity = useTransform(scrollYFlores, [0, 0.3, 1], [0, 0.6, 1])
 
-  // Scroll animations for Small Cards (Misa & Recepción) - Staggered sequence
-  const cardsContainerRef = useRef<HTMLDivElement>(null)
-  const { scrollYProgress: scrollYCards } = useScroll({
-    target: cardsContainerRef,
-    offset: ['start start', 'end end'],
-  })
-
-  // Card 1 (Misa) enters first (0 to 40% of scroll)
-  const card1X = useTransform(scrollYCards, [0, 0.4, 1], [-100, 0, 0], { clamp: true })
-  const card1Rot = useTransform(scrollYCards, [0, 0.4, 1], [-8, 0, 0], { clamp: true })
-  const card1Scale = useTransform(scrollYCards, [0, 0.4, 1], [0.85, 1, 1], { clamp: true })
-  const card1Opacity = useTransform(scrollYCards, [0, 0.25, 1], [0, 1, 1], { clamp: true })
-
-  // Card 2 (Recepción) enters second (35% to 70% of scroll)
-  const card2X = useTransform(scrollYCards, [0, 0.35, 0.7, 1], [100, 100, 0, 0], { clamp: true })
-  const card2Rot = useTransform(scrollYCards, [0, 0.35, 0.7, 1], [8, 8, 0, 0], { clamp: true })
-  const card2Scale = useTransform(scrollYCards, [0, 0.35, 0.7, 1], [0.85, 0.85, 1, 1], { clamp: true })
-  const card2Opacity = useTransform(scrollYCards, [0, 0.35, 0.55, 1], [0, 0, 1, 1], { clamp: true })
-
-  // Bouncing animation for map icons after both cards have settled (70% to 100%)
-  const mapBounceY = useTransform(scrollYCards, [0, 0.7, 0.77, 0.84, 0.91, 0.96, 1], [0, 0, -20, 0, -10, 0, 0])
-  const mapBounceScale = useTransform(scrollYCards, [0, 0.7, 0.77, 0.84, 0.91, 0.96, 1], [1, 1, 1.2, 0.96, 1.1, 0.98, 1])
-  const mapBounceRot = useTransform(scrollYCards, [0, 0.7, 0.77, 0.84, 0.91, 0.96, 1], [0, 0, -8, 6, -3, 1, 0])
-
   // Scroll animations for Final Image Section
   const finalContainerRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress: scrollYFinal } = useScroll({
@@ -349,66 +537,14 @@ function App() {
           <h1>Sábado 3 de Octubre del 2026</h1>
         </div>
 
-        <div className='scroll-section-container' ref={cardsContainerRef}>
-          <div className='scroll-section-sticky'>
-            <div className='flex center-w f-wrap'>
-              <motion.div
-                className="small-card"
-                style={{ x: card1X, rotate: card1Rot, scale: card1Scale, opacity: card1Opacity }}
-              >
-                <h1>Misa</h1>
-                <p><strong>5:00 pm</strong></p>
-
-                <div className='flex center-w'>
-                  <motion.a
-                    className='map-icon'
-                    href='https://maps.app.goo.gl/YrJW4Q5hYvbfLf1u8'
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      y: mapBounceY,
-                      scale: mapBounceScale,
-                      rotate: mapBounceRot,
-                      display: 'inline-block',
-                    }}
-                    whileHover={{ scale: 1.15 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <img src={mapIcon} alt="Map" />
-                  </motion.a>
-                </div>
-                <p>Parroquia de nuestra señora del destierro</p>
-              </motion.div>
-              <motion.div
-                className="small-card"
-                style={{ x: card2X, rotate: card2Rot, scale: card2Scale, opacity: card2Opacity }}
-              >
-                <h1>Recepción</h1>
-                <p><strong>6:00pm</strong></p>
-
-                <div className='flex center-w'>
-                  <motion.a
-                    className='map-icon'
-                    href='https://maps.app.goo.gl/qGQAaZU4FfchrnsT9'
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      y: mapBounceY,
-                      scale: mapBounceScale,
-                      rotate: mapBounceRot,
-                      display: 'inline-block',
-                    }}
-                    whileHover={{ scale: 1.15 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <img src={mapIcon} alt="Map" />
-                  </motion.a>
-                </div>
-                <p>Salón Los Encinos</p>
-              </motion.div>
-            </div>
-          </div>
-        </div>
+        {isMobile ? (
+          <>
+            <MobileMisaSection />
+            <MobileRecepcionSection />
+          </>
+        ) : (
+          <DesktopCardsSection />
+        )}
 
         <div className='page'>
           <div className='medium-card'>
