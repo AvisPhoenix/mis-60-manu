@@ -1,0 +1,53 @@
+@import url("https://fonts.googleapis.com/css2?family=Poiret+One&family=Viaoda+Libre&display=swap");
+
+:root {
+	--background: #f4ebe4;
+	--background-gradient: #fff1e6;
+	--border: #bf8b39;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: var(--background);
+	background: radial-gradient(
+		circle at 100% 0%,
+		var(--background-gradient),
+		var(--background)
+	);
+	padding: 2rem;
+	min-height: 100vh;
+	color: var(--text);
+}
+
+h1 {
+	font-family: "Viaoda Libre";
+	text-align: center;
+	font-size: 3rem;
+}
+
+p {
+	font-family: "Poiret One";
+	line-height: 1.5;
+	font-size: 1.5rem;
+	font-weight: bolder;
+	text-align: center;
+
+	margin-bottom: 4rem;
+}
+
+input{
+    width: 100%;
+    font-size: 16px;
+    line-height: 1rem;
+    color: #333;
+    border: none;
+    border-bottom: 1px solid #757575;
+    background: white;
+    outline: none;
+}
