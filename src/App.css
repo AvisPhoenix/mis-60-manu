@@ -258,10 +258,6 @@
     margin: 1rem;
     border-radius: 8px;
     box-shadow: 4.0px 8.0px 8.0px hsl(0deg 0% 0% / 0.38);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-    transform: translateZ(0);
-    will-change: transform, opacity;
     h1 {
         font-size: 2rem;
     }
