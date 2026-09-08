@@ -344,18 +344,18 @@ function App() {
     setSuccessMessage('')
 
     if (!nombre.trim()) {
-      setErrorMessage('Algo salio mal, intenta mas tarde')
+      setErrorMessage('Debes escribir tu nombre.')
       return
     }
 
     if (!autenticado) {
-      setErrorMessage('Esperando conexión segura... intenta mas tarde')
+      setErrorMessage('Esperando conexión segura... intenta mas tarde.')
       return
     }
 
     const invitados = parseInt(numInvitados, 10)
     if (isNaN(invitados) || invitados < 1) {
-      setErrorMessage('Algo salio mal, intenta mas tarde')
+      setErrorMessage('Debes escribir la cantidad de invitados.')
       return
     }
 
@@ -366,7 +366,7 @@ function App() {
       setNombre('')
       setNumInvitados('')
     } catch (error) {
-      setErrorMessage('Algo salio mal, intenta mas tarde')
+      setErrorMessage('Algo salio mal, intenta mas tarde.')
     } finally {
       setIsSubmitting(false)
     }
@@ -456,7 +456,7 @@ function App() {
       <div className="corner bottom right"></div>
       <div className="content">
         <div className="page page1">
-          <h1>Estas cordialmente invitado</h1>
+          <h1>Estás cordialmente invitado</h1>
           <div className='flex center-w'>
             <img className="intro" src={ introImg } />
           </div>
@@ -534,7 +534,7 @@ function App() {
         </div>
 
         <div className='page'>
-          <h1>Sábado 3 de Octubre del 2026</h1>
+          <h1>Sábado 3 de Octubre de 2026</h1>
         </div>
 
         {isMobile ? (
