@@ -14,6 +14,7 @@ import manu07 from './assets/manu07.jpeg'
 import manu08 from './assets/manu08.jpeg'
 import manu09 from './assets/manu09.jpeg'
 import mapIcon from './assets/map.png'
+import bgMusic from './assets/scqs.mp3'
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
@@ -65,6 +66,8 @@ function App() {
   const [successMessage, setSuccessMessage] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [autenticado, setAutenticado] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false)
+  const audioRef = useRef<HTMLAudioElement>(null)
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -79,26 +82,50 @@ function App() {
       }
     });
 
+    const playAudio = () => {
+      if (audioRef.current) {
+        audioRef.current.play()
+          .then(() => {
+            setIsPlaying(true)
+          })
+          .catch((err) => console.log("Autoplay prevent / awaiting user interaction:", err));
+      }
+    }
+
+    // Try starting on mount (works on desktop/browsers allowing autoplay)
+    playAudio();
+
     const handleFirstInteraction = () => {
+      if (audioRef.current && audioRef.current.paused) {
+        audioRef.current.play()
+          .then(() => setIsPlaying(true))
+          .catch((err) => console.log("Play failed on interaction:", err));
+      }
       window.removeEventListener('click', handleFirstInteraction)
       window.removeEventListener('touchstart', handleFirstInteraction)
-      window.removeEventListener('scroll', handleFirstInteraction)
-      window.removeEventListener('keydown', handleFirstInteraction)
     }
 
     window.addEventListener('click', handleFirstInteraction)
     window.addEventListener('touchstart', handleFirstInteraction)
-    window.addEventListener('scroll', handleFirstInteraction)
-    window.addEventListener('keydown', handleFirstInteraction)
 
     return () => {
       window.removeEventListener('click', handleFirstInteraction)
       window.removeEventListener('touchstart', handleFirstInteraction)
-      window.removeEventListener('scroll', handleFirstInteraction)
-      window.removeEventListener('keydown', handleFirstInteraction)
       unsubscribe();
     }
   }, [])
+
+  const toggleMusic = () => {
+    if (!audioRef.current) return
+    if (audioRef.current.paused) {
+      audioRef.current.play()
+        .then(() => setIsPlaying(true))
+        .catch((err) => console.error("Could not play audio:", err))
+    } else {
+      audioRef.current.pause()
+      setIsPlaying(false)
+    }
+  }
 
   const handleConfirmar = async () => {
     setErrorMessage('')
@@ -188,24 +215,29 @@ function App() {
   const floresTextY = useTransform(scrollYFlores, [0, 0.4, 1], [30, 15, 0])
   const floresTextOpacity = useTransform(scrollYFlores, [0, 0.3, 1], [0, 0.6, 1])
 
-  // Scroll animations for Small Cards (Misa & Recepción)
+  // Scroll animations for Small Cards (Misa & Recepción) - Staggered sequence
   const cardsContainerRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress: scrollYCards } = useScroll({
     target: cardsContainerRef,
     offset: ['start start', 'end end'],
   })
-  // Cards finish their entrance by 65% of the scroll track
-  const cardLeftX = useTransform(scrollYCards, [0, 0.65], [-120, 0])
-  const cardLeftRot = useTransform(scrollYCards, [0, 0.65], [-10, 0])
-  const cardRightX = useTransform(scrollYCards, [0, 0.65], [120, 0])
-  const cardRightRot = useTransform(scrollYCards, [0, 0.65], [10, 0])
-  const cardsScale = useTransform(scrollYCards, [0, 0.65], [0.85, 1])
-  const cardsOpacity = useTransform(scrollYCards, [0, 0.35], [0.1, 1])
 
-  // Bouncing animation for map icons after small-card animation finishes (0.65 to 1.0)
-  const mapBounceY = useTransform(scrollYCards, [0, 0.65, 0.73, 0.81, 0.88, 0.94, 1], [0, 0, -22, 0, -12, 0, 0])
-  const mapBounceScale = useTransform(scrollYCards, [0, 0.65, 0.73, 0.81, 0.88, 0.94, 1], [1, 1, 1.25, 0.95, 1.12, 0.98, 1])
-  const mapBounceRot = useTransform(scrollYCards, [0, 0.65, 0.73, 0.81, 0.88, 0.94, 1], [0, 0, -10, 8, -4, 2, 0])
+  // Card 1 (Misa) enters first (0 to 40% of scroll)
+  const card1X = useTransform(scrollYCards, [0, 0.4], [-100, 0])
+  const card1Rot = useTransform(scrollYCards, [0, 0.4], [-8, 0])
+  const card1Scale = useTransform(scrollYCards, [0, 0.4], [0.85, 1])
+  const card1Opacity = useTransform(scrollYCards, [0, 0.25], [0, 1])
+
+  // Card 2 (Recepción) enters second (35% to 70% of scroll)
+  const card2X = useTransform(scrollYCards, [0.35, 0.7], [100, 0])
+  const card2Rot = useTransform(scrollYCards, [0.35, 0.7], [8, 0])
+  const card2Scale = useTransform(scrollYCards, [0.35, 0.7], [0.85, 1])
+  const card2Opacity = useTransform(scrollYCards, [0.35, 0.55], [0, 1])
+
+  // Bouncing animation for map icons after both cards have settled (70% to 100%)
+  const mapBounceY = useTransform(scrollYCards, [0, 0.7, 0.77, 0.84, 0.91, 0.96, 1], [0, 0, -20, 0, -10, 0, 0])
+  const mapBounceScale = useTransform(scrollYCards, [0, 0.7, 0.77, 0.84, 0.91, 0.96, 1], [1, 1, 1.2, 0.96, 1.1, 0.98, 1])
+  const mapBounceRot = useTransform(scrollYCards, [0, 0.7, 0.77, 0.84, 0.91, 0.96, 1], [0, 0, -8, 6, -3, 1, 0])
 
   // Scroll animations for Final Image Section
   const finalContainerRef = useRef<HTMLDivElement>(null)
@@ -220,6 +252,16 @@ function App() {
 
   return (
     <div className='card'>
+      <audio ref={audioRef} src={bgMusic} loop preload="auto" />
+      <button
+        className="music-toggle-btn"
+        onClick={toggleMusic}
+        title={isPlaying ? "Pausar música" : "Reproducir música"}
+        aria-label={isPlaying ? "Pausar música" : "Reproducir música"}
+      >
+        {isPlaying ? '🎵' : '🔇'}
+      </button>
+
       <div className="corner top left"></div>
       <div className="corner top right"></div>
       <div className="corner bottom left"></div>
@@ -312,7 +354,7 @@ function App() {
             <div className='flex center-w f-wrap'>
               <motion.div
                 className="small-card"
-                style={{ x: cardLeftX, rotate: cardLeftRot, scale: cardsScale, opacity: cardsOpacity }}
+                style={{ x: card1X, rotate: card1Rot, scale: card1Scale, opacity: card1Opacity }}
               >
                 <h1>Misa</h1>
                 <p><strong>5:00 pm</strong></p>
@@ -339,7 +381,7 @@ function App() {
               </motion.div>
               <motion.div
                 className="small-card"
-                style={{ x: cardRightX, rotate: cardRightRot, scale: cardsScale, opacity: cardsOpacity }}
+                style={{ x: card2X, rotate: card2Rot, scale: card2Scale, opacity: card2Opacity }}
               >
                 <h1>Recepción</h1>
                 <p><strong>6:00pm</strong></p>

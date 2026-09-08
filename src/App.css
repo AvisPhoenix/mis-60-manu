@@ -173,14 +173,15 @@
 
 .scroll-section-container {
     position: relative;
-    height: 180vh;
+    height: 200vh;
     width: 100%;
 }
 
 .scroll-section-sticky {
     position: sticky;
     top: 0;
-    height: 106vh;
+    height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -195,7 +196,7 @@
     }
 
     .scroll-section-container {
-        height: 150vh;
+        height: 220vh;
     }
 
     .gallery {
@@ -257,6 +258,10 @@
     margin: 1rem;
     border-radius: 8px;
     box-shadow: 4.0px 8.0px 8.0px hsl(0deg 0% 0% / 0.38);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    will-change: transform, opacity;
     h1 {
         font-size: 2rem;
     }
@@ -264,6 +269,35 @@
     p {
         font-size: 1rem;
     }
+}
+
+.music-toggle-btn {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 9999;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: #bf8b39;
+    border: 2px solid #e5c28a;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    padding: 0;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.music-toggle-btn:hover {
+    transform: scale(1.1);
+}
+
+.music-toggle-btn:active {
+    transform: scale(0.95);
 }
 
 .map-icon{
