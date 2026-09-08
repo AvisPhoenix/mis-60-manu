@@ -585,6 +585,8 @@ function App() {
             <input
               className='numero'
               type='number'
+              inputMode="numeric"
+              pattern="\d*"
               placeholder='Num. de asistentes'
               value={numInvitados}
               onChange={(e) => setNumInvitados(e.target.value)}
